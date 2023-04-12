@@ -164,8 +164,7 @@ void test_init()
     TCCR2B |= timer2_64;
     TCCR2A |= 0b00100011;
 
-    DDRB |= (1 << PB1);
-    DDRD |= (1 << PD6);
-    DDRD |= (1 << PD5);
     DDRD |= (1 << PD3);
+    DDRD |= (1 << PD5);
+    DDRD |= (1 << PD6);
 }
