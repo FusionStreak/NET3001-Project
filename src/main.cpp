@@ -47,24 +47,23 @@ int main()
 	// Setup
 	USART_init();
 	init_LCD();
-	PWM_init(timer0, A, fastNormal, 64); // blue - timer 0 channel A
-	PWM_init(timer0, B, fastNormal, 64); // green - timer 0 channel B
-	PWM_init(timer2, B, fastNormal, 64); // red - timer 2 channel B
-	test_init();
-	DDRD |= 1 << BUZZER; // set PC5 buzzer to output
+	PWM_init(timer0, A, fastNormal, timer0_64); // blue - timer 0 channel A
+	PWM_init(timer0, B, fastNormal, timer0_64); // green - timer 0 channel B
+	PWM_init(timer2, B, fastNormal, timer2_64); // red - timer 2 channel B
+	DDRD |= 1 << BUZZER;						// set PC5 buzzer to output
 
 	// output Current Values: to LCD on the first line
-	LCD_command(1);
-	LCD_command(0x01);
+	LCD_command(clear);
+	LCD_command(returnFirst);
 	LCD_string(msg1);
 
 	char string[10];
 	long count;
 	double distance;
 
-	DDRC = 0x01;		 /* Make trigger pin as output */
+	DDRC |= 0x01;		 /* Make trigger pin as output */
 	DDRB &= ~(1 << PB0); /* Make echo pin as input */
-	PORTB = 0x01;		 /* Turn on Pull-up */
+	PORTB |= 0x01;		 /* Turn on Pull-up */
 
 	USART_print(msg2);
 	USART_send('\n');
@@ -108,7 +107,7 @@ int main()
 		USART_send('\n');
 		_delay_ms(200);
 
-		LCD_command(0xC0); // Move to second line
+		LCD_command(returnSecond); // Move to second line
 
 		PORTD &= ~(1 << BUZZER); // Buzzer is off
 
