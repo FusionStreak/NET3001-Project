@@ -20,7 +20,7 @@
 
 void init_LCD()
 {
-    DDRC = (1 << RS) + (1 << EN);      // Set Register Select and Enable pins to output
+    DDRC |= (1 << RS) + (1 << EN);     // Set Register Select and Enable pins to output
     PORTC &= ~((1 << RS) + (1 << EN)); // Set RS and EN to low
 
     DDRB |= 0x1E; // Set pins for LCD data/command to output
@@ -35,16 +35,16 @@ void init_LCD()
 
 void LCD_command(uint8_t comm)
 {
-    LCD_write_nibble((comm & 0x1E) >> 1, 0);
-    LCD_write_nibble((comm >> 1), 0);
+    LCD_write_nibble((comm), 0);
+    LCD_write_nibble((comm << 4), 0);
     if (comm == 0x01)
         _delay_ms(5); // Clear command needs extra time to process
 }
 
 void LCD_data(uint8_t data)
 {
-    LCD_write_nibble((data&0x1E)>>1, RS);
-    LCD_write_nibble((data >> 1), RS);
+    LCD_write_nibble((data), RS);
+    LCD_write_nibble((data << 4), RS);
 }
 
 void LCD_string(char *str)
@@ -58,15 +58,15 @@ void LCD_string(char *str)
 
 void LCD_enable_pulse()
 {
-    PORTB |= (1 << EN);  // Set enable pin high
-    PORTB &= ~(1 << EN); // Set enable pin low
+    PORTC |= (1 << EN);  // Set enable pin high
+    PORTC &= ~(1 << EN); // Set enable pin low
     _delay_ms(2);        // Wait 2 ms for command or data to set in
 }
 
 void LCD_write_nibble(uint8_t data, uint8_t isCommand)
 {
     // Set PORTD LCD pins to higher nibble of data (first 4 bits)
-    PORTB = ((data & 0x1E));
+    PORTB |= (data >> 3) & 0x1E;
 
     isCommand ? PORTC &= ~(1 << RS) : PORTC |= (1 << RS);
 
